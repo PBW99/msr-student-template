@@ -1,6 +1,10 @@
 1. leap motion
+https://youtu.be/w9m-svG4Bfs
 2. 콘솔 슈팅
+https://youtu.be/bGYSNLHD4Fw
 3. hyu-jokbo
+https://youtu.be/EI1EOzhl1lQ
 4. lock free linked list
+https://youtu.be/GOOLeYomCxM
 5. xv6
 6. LLP echo Chat
