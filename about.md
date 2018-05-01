@@ -15,5 +15,5 @@ image: http://unsplash.it/400?random
 * 인공지능 
 
 ### Programming language
-* C, C++, Java, Python
+> C, C++, Java, Python
 
