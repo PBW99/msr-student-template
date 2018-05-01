@@ -2,7 +2,7 @@
 layout: about
 path: /about
 url: index.html
-image: http://unsplash.it/400?random
+image: /portfolio/public/images/profile.jpg
 ---
 
 ## Overview
