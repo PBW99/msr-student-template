@@ -12,4 +12,4 @@ permalink: "project-1.html"
 ### Topic 1
 
 ## 실행 영상
-<iframe width="680" height="460" src="http://www.youtube.com/embed/w9m-svG4Bfs" frameborder="0"></iframe>
+<iframe width="680" height="460" src="http://www.youtube.com/embed/w9m-svG4Bfs" frameborder="0"> </iframe>
