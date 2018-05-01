@@ -6,9 +6,8 @@ image: http://unsplash.it/400?random
 ---
 
 ## Overview
+> 2013~2019(예정) : 한양대학교 컴퓨터전공
 
 
 ### Research interests
-* Interest 1
-* Interest 2
-* Interest 3
+* 게임서버 개발
