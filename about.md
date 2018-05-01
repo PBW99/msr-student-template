@@ -12,4 +12,4 @@ image: http://unsplash.it/400?random
 ### Research interests
 * 게임서버 개발
 * VR
-* 
+* 인공지능 
