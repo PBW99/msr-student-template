@@ -8,3 +8,4 @@ https://youtu.be/EI1EOzhl1lQ
 https://youtu.be/GOOLeYomCxM
 5. xv6
 6. LLP echo Chat
+7. Simple Deadlock Checker
