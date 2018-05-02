@@ -1,7 +1,7 @@
 ---
 layout: project
 title: (Unity/LeapMotion) Hand GestureLearing
-date: September 22, 2014
+date: March 19, 2018
 image: /portfolio/public/images/1.Leapmotion.png
 permalink: "project-1.html"
 ---
