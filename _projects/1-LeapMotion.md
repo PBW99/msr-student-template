@@ -18,5 +18,5 @@ permalink: "project-1.html"
 {% include youtube_embed.html id="w9m-svG4Bfs" %}  
 
 ## 소스코드
-> [github](https://github.com/ProjectInTheClass/HyuJokbo)
+> [github](https://github.com/PBW99/HYU_4th_1se/tree/master/HumanComputerInteraction/P1_UnivHandGesture)
 
