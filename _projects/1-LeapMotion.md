@@ -17,3 +17,6 @@ permalink: "project-1.html"
 ## 실행 영상
 {% include youtube_embed.html id="w9m-svG4Bfs" %}  
 
+## 소스코드
+> [github](https://github.com/ProjectInTheClass/HyuJokbo)
+
