@@ -1,7 +1,7 @@
 ---
 layout: project
 title: (C) Play with xv6 Operating System
-date: September 26, 2014
+date: June 20, 2017
 image: /portfolio/public/images/5.OS.png
 ---
 
