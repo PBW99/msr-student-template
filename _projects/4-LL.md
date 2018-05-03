@@ -32,8 +32,8 @@ P_C : Cursor의 부모,)
 
 
 ### LockFree Linked List
-![](/portfolio/public/images/4-ParBSTLFLL/ParBST-4-core-IO.png){: width="30%" height="30%"}
-![](/portfolio/public/images/4-ParBSTLFLL/ParBST-8-core-IO.png){: width="30%" height="30%"}
+![](/portfolio/public/images/4-ParBSTLFLL/ParBST-4-core-IO.png){: width="480" height="320"}
+![](/portfolio/public/images/4-ParBSTLFLL/ParBST-8-core-IO.png){: width="480" height="320"}
 
 
 ## 사용 언어 / 도구
