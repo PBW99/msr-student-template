@@ -22,11 +22,14 @@ permalink: "project-4.html"
 4.	P_C를 unlock
 5.	C를 해당 노드로 옮기고 그 노드의 lock을 잡는다. 
 6.	C가 T가 될 때까지 (3~5)반복
-7.	C가 T가 될 경우, 적합한 루틴 수행 후 P_C와 C를 unlock(Insert 인 경우 이미 존재하므로 삽입하지 않고, unlock만 수행
-7-1. C가 null(리프의 밑)이 될 경우, false를 반환, 반환 하기 전에 P_C를 unlock
-	(Insert 인 경우 그 자리에 삽입),
-	(C가 null일 경우 5를 수행하지 않는다. 따라서 P_C만 unlock)
-7-2. 이 과정을 C가 T를 가리킬 때 까지 반복한다. 이 방식으로 스레드는 2개의 lock을 잡고 순회하며, C와 P_C가 갱신 되기 전에 P_C를 unlock하고, 갱신한다. 1-2(1번과 2번사이), 4-5를 제외하고 스레드는 2개의 lock을 잡고 있다. C와 P_C 두 개의 lock을 잡고, C하나의 lock만을 잡지 않는다. C가 T일 경우 T에 삽입하는 동안, C가 Delete될 수 있기 때문이다.
+7.	C가 T가 될 경우, 적합한 루틴 수행 후 P_C와 C를 unlock(Insert 인 경우 이미 존재하므로 삽입하지 않고, unlock만 수행<br>
+7-1. C가 null(리프의 밑)이 될 경우, false를 반환, 반환 하기 전에 P_C를 unlock<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;(Insert 인 경우 그 자리에 삽입)<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;(C가 null일 경우 5를 수행하지 않는다. 따라서 P_C만 unlock)
+	<br>
+7-2. 이 과정을 C가 T를 가리킬 때 까지 반복한다. 이 방식으로 스레드는 2개의 lock을 잡고 순회하며, C와 P_C가 갱신 되기 전에 P_C를 unlock하고, 갱신한다.<br>
+ &nbsp;&nbsp;&nbsp;&nbsp;1-2(1번과 2번사이), 4-5를 제외하고 스레드는 2개의 lock을 잡고 있다.<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;C와 P_C 두 개의 lock을 잡고, C하나의 lock만을 잡지 않는다. C가 T일 경우 T에 삽입하는 동안, C가 Delete될 수 있기 때문이다.<br>
 
 
 ### 결과
@@ -44,18 +47,18 @@ permalink: "project-4.html"
 
 	* **Execution time**<br>
 	   스레드 2개일 경우의 성능이 가장 좋았습니다. 스레드가 3개 이상일 경우 root노드에 lock을 잡기 위해 기다리는 스레드가 많아, 느린 것으로 추정됩니다.
-	   <br>     
+	   <br><br>
 	* **Execution time의 Sum**<br>
  		보다시피 코어가 8개로 늘어났음에도 불구하고, 큰 성능 증가가 보이진 않았습니다. 이 Fine-Grained lock BST는 성능이 않음을 알 수 있습니다.
-	 	<br>     
+	 	<br><br>  
 	* **Cache-miss와 cycles, execution time**<br>
  		BST의 Insert는 Leaf에만 Write를 하므로, 같은 노드를 바라보는 스레드가 있을 경우 한 스레드가 Write를 하여 다른 스레드에게 캐시invalidate영향이 미치는 경우는 별로 없다. 그렇다면 cache-miss가 증가하는 것은 다른 원인으로 볼 수 있습니다. 그 원인은 lock입니다. 한 스레드는 자신이 바라보는 node의 lock이 풀릴 때까지 기다려야 하는데, 한 락을 잡거나 풀기 위해서 모두 그 락에 write를 하기 때문에 invalidate가 생긴 것입니다.
 		따라서 락에 대기하는 시간이 길어지므로, 스레드는 wait을 하게 되고 cycles수도 그만큼 줄어든 것입니다.
-		<br>     
+		<br><br> 
 	* **스레드가 3,4개 일 때,  8개 일 때**<br>
  		이것은 thread-switch타임과, CPU 휴식 비용을 생각해 볼 필요가 있습니다. lock의 구현마다 다르겠지만 스레드가 3,4개 일 경우 lock에서 기다리고 있는 스레드는 Sleep을 하게 됩니다. 이 때에는 실질적으로 하는 일이 없으므로 아무런 성능도 내지 못합니다.
 		하지만 스레드가 8개 일 경우, CPU의 휴식 비율을 줄이고 더 많이 사용함으로써 성능이 좋아졌다고 볼 수 있습니다. 하지만 thread-switch에도 비용이 들기 마련인데, 그럼에도 불구하고 성능이 좋아졌다는 것은 thread-switch cost < CPU burning or Resting cost 이기 때문일 것입니다.
-		<br>     
+		<br><br> 
 
 
 * **Insert 100만개 후 , Insert/Search**<br>
@@ -68,10 +71,10 @@ permalink: "project-4.html"
 4-Core IS_19 Sum : 25774(ms)		8-Core IS_19 Sum : 12978(ms)<br>
 	* **Search**<br>
  		Search는 Insert와 lock을 잡는 과정이 동일합니다. 따라서 비슷한 그래프를 보입니다.  
-		 <br>
+		 <br><br>
 	* **IS_14와 IS_19사이의 성능차이**<br>
  		성능차이가 거의 없습니다. 이는 Search도 Insert와 동일한 Exclusive락을 잡기 때문에 이로 인해 성능증가의 한계치에 도달한 것입니다.
-		 <br>
+		 <br><br>
 
 
 * **[Read/Write lock이용] Insert 100만개 후 , Insert/Search**<br>
@@ -84,15 +87,15 @@ permalink: "project-4.html"
 4-Core IS_RW_14 Sum : 21643 (ms), 		8-Core IS_RW_14 Sum : 18079 (ms)<br>
 4-Core IS_RW_19 Sum : 17950 (ms), 		8-Core IS_RW_19 Sum : 8619 (ms)<br>
 	* Search를 Readlock으로 나머지는 Writelock으로 변경하였습니다.
-		<br>
+		<br><br>
 	* **8-Core IS_RW_11 Sum과 8-Core IS_11 Sum**<br>
  		오히려 RW락을 적용 했을 시 성능이 느려졌습니다. 이는 RW락으로 변경했을 시 그에 따른 스케줄링 정책이 다르기 때문에 그로인한 오차로 보여진다.
-		 <br>
+		 <br><br>
 	*  **RW_IS_19와 IS_19사이의 성능차이**<br>
  		성능차이가 큽니다(12978ms, 8619ms). 이는 RW락에선 Search를가Shared lock 잡기에,  Exclusive락의 한계치가 없어진 것입니다. 결국 8-Core IS_RW_19가 가장 좋은 성능을 보였습니다.
-		 <br>
+		 <br><br>
 
-
+<br><br>
 # LockFree Linked List
 > 하나의 Linked List에 다수에 스레드가 CRUD할 수 있도록 만들어서 Parallel Linked List입니다.
 > 하지만 Lock없이 구현하였기에 LockFree Linked List입니다. 방법은 다음과 같습니다.
@@ -140,7 +143,7 @@ permalink: "project-4.html"
 ![](/portfolio/public/images/4-ParBSTLFLL/LFLL_4-core-IO.png){: width="480" height="320"}
 ![](/portfolio/public/images/4-ParBSTLFLL/LFLL_8-core-IO.png){: width="480" height="320"}
 <br>
-
+<br><br>
 * **Insert 10만 + Insert/Search**
 <br>
 ![](/portfolio/public/images/4-ParBSTLFLL/LFLL_4-core-IS.png){: width="480" height="320"}
