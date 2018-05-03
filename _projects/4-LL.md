@@ -34,7 +34,7 @@ P_C : Cursor의 부모,)
 	* 1.	Window10 - VMware Ubuntu16.04 1(CPU : i5-6200U 2.30GHz, Core : 2x2(hyperthreading), MemSize : 2G, L1d/i-Cache:32K, L2-Cache:256K, L3-Cache:3072K)
 	* 2.	Window10 - VMware Ubuntu16.04 2(CPU : Xeon E3-1230 v3 3.30GHz, Core : 4x2(hyperthreading), MemSize : 2G, L1d/i-Cache:32K, L2-Cache:256K, L3-Cache:8192K)
 
-* Insert Only
+* Insert Only<br></br>
 ![](/portfolio/public/images/4-ParBSTLFLL/ParBST-4-core-IO.png){: width="480" height="320"}
 ![](/portfolio/public/images/4-ParBSTLFLL/ParBST-8-core-IO.png){: width="480" height="320"}
 ("$perf stat –d"를 이용하여 테스트)
@@ -54,7 +54,7 @@ P_C : Cursor의 부모,)
 하지만 스레드가 8개 일 경우, CPU의 휴식 비율을 줄이고 더 많이 사용함으로써 성능이 좋아졌다고 볼 수 있습니다. 하지만 thread-switch에도 비용이 들기 마련인데, 그럼에도 불구하고 성능이 좋아졌다는 것은 thread-switch cost < CPU burning or Resting cost 이기 때문일 것입니다.
 
 
-* Insert 100만개 후 , Insert/Search
+* Insert 100만개 후 , Insert/Search<br></br>
 ![](/portfolio/public/images/4-ParBSTLFLL/ParBST-4-core-IS.png){: width="480" height="320"}
 ![](/portfolio/public/images/4-ParBSTLFLL/ParBST-8-core-IS.png){: width="480" height="320"}
 ("$time -p"를 이용하여 테스트)
@@ -69,7 +69,7 @@ P_C : Cursor의 부모,)
  성능차이가 거의 없습니다. 이는 Search도 Insert와 동일한 Exclusive락을 잡기 때문에 이로 인해 성능증가의 한계치에 도달한 것입니다.
 
 
-* [Read/Write lock이용] Insert 100만개 후 , Insert/Search
+* [Read/Write lock이용] Insert 100만개 후 , Insert/Search<br></br>
 ![](/portfolio/public/images/4-ParBSTLFLL/ParBST-4-core-RW-IS.png){: width="480" height="320"}
 ![](/portfolio/public/images/4-ParBSTLFLL/ParBST-8-core-RW-IS.png){: width="480" height="320"}
 ("$time -p"를 이용하여 테스트)
