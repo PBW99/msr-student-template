@@ -97,6 +97,7 @@ permalink: "project-4.html"
 > 하나의 Linked List에 다수에 스레드가 CRUD할 수 있도록 만들어서 Parallel Linked List입니다.
 > 하지만 Lock없이 구현하였기에 LockFree Linked List입니다. 방법은 다음과 같습니다.
 > > (Window라는 클래스 존재. Window는 parent Node와 current Node를 가진다. Search시에 이 Window객체를 반환하는데, 이는 parent Node와 current Node를 같이 반환하기 위해서이다.)
+<br>
 * **Search**
 	1.	먼저 parentN, currN, succN을 가진다. parentN은 root로 시작하고, currN은 parent.next.getReference()를 가진다.
 	2.	succN은 currN.next.get(marked)의 반환값을 가진다.
@@ -107,6 +108,7 @@ permalink: "project-4.html"
 	3.	succN이 marked되지 않았을 경우, currN.data >=toSearch인지 확인한다.
 	3.1 맞다면 new Window(parentN, currN)을 반환
 	4.	아니라면 parentN = currN, currN은 succN으로 지정하고 2로 돌아가 succN을 새로 찾는다.
+	<br>
 
 * **Insert** 
 	1.	먼저 Search(root,data)를 통해 window를 얻고 그에 해당하는 parentN과 currN을 얻는다.
@@ -115,6 +117,7 @@ permalink: "project-4.html"
 	4.	parentN.next.compareAndSet(currN,newNode,false,false)를 통해 parent.next가 newNode를 가리키도록한다.
 	4.1 성공할 경우 return true;
 	5.	실패할 경우 주어진 data를 가지고 1로 돌아가 처음부터 다시 Insert시도한다.
+	<br>
 
 * **Delete**
 	1.	먼저 Search(root,data)를 통해 window를 얻고 그에 해당하는 parentN과 currN을 얻는다.
@@ -125,8 +128,9 @@ permalink: "project-4.html"
 	4.	currN.next.compareAndSet(succN,succN,false,true)를 currN을 논리적 딜리트한다.
 	4.1 실패할 경우 currN과 succN사이의 새 노드가 삽입되었거나,  다른 스레드가 이미 mark했음을 의미한다. 혹은 succN이 이미 논리적 딜리트 되어있었고 이것이 Search도중 피지컬 딜리트가 되었을 수도 있다. 어쨌든, 1로 돌아가 처음부터 다시 찾고 marking을 시도한다.
 	5.	성공할 경우 parentN.next.compareAndSet(currN,succN,false,false)를 통해 parentN이 succN을 가리키도록한다.
-5-1 이 경우 실패를 하더라도 다른 스레드가 이미 바꾸었거나, 할 것을 의미한다. 따라서 true리턴.
-5-2. 여기서 없어진 currN은 가비지 콜렉터에 의해 제거될 것이다.
+	5-1 이 경우 실패를 하더라도 다른 스레드가 이미 바꾸었거나, 할 것을 의미한다. 따라서 true리턴.
+	5-2. 여기서 없어진 currN은 가비지 콜렉터에 의해 제거될 것이다.
+	<br>
 
 ### 결과
 * **Insert Only 10만**
