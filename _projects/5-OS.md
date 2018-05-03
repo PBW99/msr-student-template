@@ -31,6 +31,7 @@ xv6운영체제를 건드려보는 내용입니다. <br>
 > Stride Scheduling은 Turnaround Time, Response Time을 위주로 고려한 것이 아닌, Proportional Share 스케줄링 정책입니다. 각 프로세스가 실제 요청한 Ticket 만큼 더 많이 CPU를 사용하도록 합니다.
 
 > 방법은 다음과 같습니다.
+
 1. 특정 프로세스는 Ticket만큼 CPU를 요구한다. 예를 들어 10을 요구.
 2. 임의의 Large Number를 두자(예를 들어 10000) 이 프로세스의 Stride는 LargeNumber/#Ticket 이다.(10000/10)
 3. 이 프로세스는 한 Time Quantum마다 Stride만큼 진행한다.
