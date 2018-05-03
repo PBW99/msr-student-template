@@ -8,12 +8,12 @@ permalink: "project-4.html"
 ## Overview
 > 학교 과제로 주어진 Parallel Binary Search Tree와 LockFree Linked List구현입니다. Java로 구현했으며 Linux 프로그램 성능 분석 도구인 Perf를 이용하여 성능을 분석했습니다.
 
-### Parallel Binary Search Tree
+# Parallel Binary Search Tree
 > 하나의 Binary Search Tree에 다수에 스레드가 동시다발적으로 CRUD(Create/Read/Update/Delete)할 수 있도록 만들어서 Parallel Binary Search Tree입니다.
 > 다수의 스레드가 접근할 수 있도록 Fine-grained lock으로 구현했습니다. 그 중에 Hand-over-Hand lock을 이용하였습니다.
 방법은 다음과 같습니다.
 > > (C(Cursor) : Target을 찾기 위해 BST내부를 순회하는 포인터) <br>
-(P_C : Cursor의 부모,)
+(P_C : Cursor의 부모,)<br>
 
 1.	제일 먼저 C를 root로 잡고 lock을 잡는다. 
 2.	찾아야하는 데이터의 값에 맞는 방향으로 C를 이동하고 lock을 잡는다. 이에 맞추어 P_C도 세팅한다. 
@@ -36,7 +36,7 @@ permalink: "project-4.html"
 
 * Insert Only<br>
 ![](/portfolio/public/images/4-ParBSTLFLL/ParBST-4-core-IO.png){: width="480" height="320"}
-![](/portfolio/public/images/4-ParBSTLFLL/ParBST-8-core-IO.png){: width="480" height="320"}
+![](/portfolio/public/images/4-ParBSTLFLL/ParBST-8-core-IO.png){: width="480" height="320"}<br>
 ("$perf stat –d"를 이용하여 테스트)<br>
 (x축: 스레드의 갯수이며, y축: 각각의 항목 총합에 대한 상대적인 값 )<br>
 4-Core Sum : 14825(ms) 11.944 (GHz) 2830.646(M/sec) 23.44(% of cache hits)<br>
@@ -56,7 +56,7 @@ permalink: "project-4.html"
 
 * Insert 100만개 후 , Insert/Search<br>
 ![](/portfolio/public/images/4-ParBSTLFLL/ParBST-4-core-IS.png){: width="480" height="320"}
-![](/portfolio/public/images/4-ParBSTLFLL/ParBST-8-core-IS.png){: width="480" height="320"}
+![](/portfolio/public/images/4-ParBSTLFLL/ParBST-8-core-IS.png){: width="480" height="320"}<br>
 ("$time -p"를 이용하여 테스트)<br>
 (x축: 스레드의 갯수이며, y축: ms단위의 실행시간, IS11은 Insert/Search의 비율이 1:1을 나타냄)<br>
 4-Core IS_11 Sum : 25534(ms), 		8-Core IS_11 Sum : 13339(ms)<br>
@@ -72,6 +72,7 @@ permalink: "project-4.html"
 * [Read/Write lock이용] Insert 100만개 후 , Insert/Search<br>
 ![](/portfolio/public/images/4-ParBSTLFLL/ParBST-4-core-RW-IS.png){: width="480" height="320"}
 ![](/portfolio/public/images/4-ParBSTLFLL/ParBST-8-core-RW-IS.png){: width="480" height="320"}
+<br>
 ("$time -p"를 이용하여 테스트)<br>
 (x축: 스레드의 갯수이며, y축: ms단위의 실행시간, IS11은 Insert/Search의 비율이 1:1을 나타냄)<br>
 4-Core IS_RW_11 Sum : 30574(ms), 		8-Core IS_RW_11 Sum : 26093(ms)<br>
@@ -84,7 +85,7 @@ permalink: "project-4.html"
  성능차이가 큽니다(12978ms, 8619ms). 이는 RW락에선 Search를가Shared lock 잡기에,  Exclusive락의 한계치가 없어진 것입니다. 결국 8-Core IS_RW_19가 가장 좋은 성능을 보였습니다.
 
 
-### LockFree Linked List
+# LockFree Linked List
 > 하나의 Linked List에 다수에 스레드가 CRUD할 수 있도록 만들어서 Parallel Linked List입니다.
 > 하지만 Lock없이 구현하였기에 LockFree Linked List입니다. 방법은 다음과 같습니다.
 > > (Window라는 클래스 존재. Window는 parent Node와 current Node를 가진다. Search시에 이 Window객체를 반환하는데, 이는 parent Node와 current Node를 같이 반환하기 위해서이다.)
