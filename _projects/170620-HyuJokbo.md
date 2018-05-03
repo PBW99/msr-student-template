@@ -2,7 +2,7 @@
 layout: project
 title: (Swift/iOS) HyuJokbo App
 date: June 20, 2017
-image: /portfolio/public/images/3.HyuJokbo.png
+image: /portfolio/public/images/170620-HyuJokbo.png
 permalink: "project-3.html"
 ---
 
