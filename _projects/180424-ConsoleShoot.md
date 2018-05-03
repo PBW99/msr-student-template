@@ -2,7 +2,7 @@
 layout: project
 title: (C/C++) Console Shooting
 date: April 24, 2018
-image: /portfolio/public/images/2.ConsoleShooting.png
+image: /portfolio/public/images/180424-ConsoleShoot.png
 permalink: "project-2.html"
 ---
 
