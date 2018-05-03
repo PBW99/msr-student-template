@@ -11,7 +11,7 @@ xv6운영체제를 건드려보는 내용입니다. <br>
 또한 기존의 Process구조체를 이용하여 스레드로 변형해보기도 하였습니다.
 
 ## MLFQ + Stride
-
+![](/portfolio/public/images/5-OS/overview.png){: width="480" height="320"}
 
 
 
