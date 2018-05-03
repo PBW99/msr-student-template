@@ -6,7 +6,7 @@ image: /portfolio/public/images/4.lockfreeLL.png
 permalink: "project-4.html"
 ---
 ## Overview
-> 학교 과제로 주어진 Parallel Binary Search Tree와 LockFree Linked List구현입니다. Java로 구현했으며 Linux 프로그램 성능 분석 도구인 Perf를 이용하였습니다.
+> 학교 과제로 주어진 Parallel Binary Search Tree와 LockFree Linked List구현입니다. Java로 구현했으며 Linux 프로그램 성능 분석 도구인 Perf를 이용하여 성능을 분석했습니다.
 
 ### Parallel Binary Search Tree
 > 하나의 Binary Search Tree에 다수에 스레드가 접근할 수 있도록 만들어서 Parallel Binary Search Tree입니다.
@@ -26,14 +26,40 @@ P_C : Cursor의 부모,)
 7-1. C가 null(리프의 밑)이 될 경우, false를 반환, 반환 하기 전에 P_C를 unlock
 	(Insert 인 경우 그 자리에 삽입),
 	(C가 null일 경우 5를 수행하지 않는다. 따라서 P_C만 unlock)
+7-2. 이 과정을 C가 T를 가리킬 때 까지 반복한다. 이 방식으로 스레드는 2개의 lock을 잡고 순회하며, C와 P_C가 갱신 되기 전에 P_C를 unlock하고, 갱신한다. 1-2(1번과 2번사이), 4-5를 제외하고 스레드는 2개의 lock을 잡고 있다. C와 P_C 두 개의 lock을 잡고, C하나의 lock만을 잡지 않는다. C가 T일 경우 T에 삽입하는 동안, C가 Delete될 수 있기 때문이다.
 
 
-### 결과 
+### 결과
+> Insert Only
+![](/portfolio/public/images/4-ParBSTLFLL/ParBST-4-core-IO.png){: width="480" height="320"}
+![](/portfolio/public/images/4-ParBSTLFLL/ParBST-8-core-IO.png){: width="480" height="320"}
+("$perf stat –d"를 이용하여 테스트)
+4-Core Sum : 14825(ms) 11.944 (GHz) 2830.646(M/sec) 23.44(% of cache hits)
+8-Core Sum : 15317(ms) 14.953(GHz) 2181.157(M/sec) 22.93(% of cache hits)
+
+* Execution time
+스레드 2개일 경우의 성능이 가장 좋았습니다. 스레드가 3개 이상일 경우 root노드에 lock을 잡기 위해 기다리는 스레드가 많아, 느린 것으로 추정됩니다.
+* Execution time의 Sum
+ 보다시피 코어가 8개로 늘어났음에도 불구하고, 큰 성능 증가가 보이진 않았습니다. 이 Fine-Grained lock BST는 성능이 않음을 알 수 있습니다.
+* Cache-miss와 cycles, execution time
+ BST의 Insert는 Leaf에만 Write를 하므로, 같은 노드를 바라보는 스레드가 있을 경우 한 스레드가 Write를 하여 다른 스레드에게 캐시invalidate영향이 미치는 경우는 별로 없다. 그렇다면 cache-miss가 증가하는 것은 다른 원인으로 볼 수 있습니다. 그 원인은 lock입니다. 한 스레드는 자신이 바라보는 node의 lock이 풀릴 때까지 기다려야 하는데, 한 락을 잡거나 풀기 위해서 모두 그 락에 write를 하기 때문에 invalidate가 생긴 것입니다.
+따라서 락에 대기하는 시간이 길어지므로, 스레드는 wait을 하게 되고 cycles수도 그만큼 줄어든 것입니다.
+* 스레드가 3,4개 일 때,  8개 일 때
+ 이것은 thread-switch타임과, CPU 휴식 비용을 생각해 볼 필요가 있습니다. lock의 구현마다 다르겠지만 스레드가 3,4개 일 경우 lock에서 기다리고 있는 스레드는 Sleep을 하게 됩니다. 이 때에는 실질적으로 하는 일이 없으므로 아무런 성능도 내지 못합니다.
+하지만 스레드가 8개 일 경우, CPU의 휴식 비율을 줄이고 더 많이 사용함으로써 성능이 좋아졌다고 볼 수 있습니다. 하지만 thread-switch에도 비용이 들기 마련인데, 그럼에도 불구하고 성능이 좋아졌다는 것은 thread-switch cost < CPU burning or Resting cost 이기 때문일 것입니다.
+
+
+> Insert 100만개 후 , Insert/Search
+![](/portfolio/public/images/4-ParBSTLFLL/ParBST-4-core-IS.png){: width="480" height="320"}
+![](/portfolio/public/images/4-ParBSTLFLL/ParBST-8-core-IS.png){: width="480" height="320"}
+
+> [Read/Write lock이용] Insert 100만개 후 , Insert/Search
+![](/portfolio/public/images/4-ParBSTLFLL/ParBST-4-core-RW-IS.png){: width="480" height="320"}
+![](/portfolio/public/images/4-ParBSTLFLL/ParBST-8-core-RW-IS.png){: width="480" height="320"}
 
 
 ### LockFree Linked List
-![](/portfolio/public/images/4-ParBSTLFLL/ParBST-4-core-IO.png){: width="480" height="320"}
-![](/portfolio/public/images/4-ParBSTLFLL/ParBST-8-core-IO.png){: width="480" height="320"}
+
 
 
 ## 사용 언어 / 도구
