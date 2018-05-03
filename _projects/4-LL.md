@@ -135,14 +135,14 @@ permalink: "project-4.html"
 ### 결과
 * **Insert Only 10만**
 <br>
-![](/portfolio/public/images/4-ParBSTLFLL/LFLL-4-core-IO.png){: width="480" height="320"}
-![](/portfolio/public/images/4-ParBSTLFLL/LFLL-8-core-IO.png){: width="480" height="320"}
+![](/portfolio/public/images/4-ParBSTLFLL/LFLL_4-core-IO.png){: width="480" height="320"}
+![](/portfolio/public/images/4-ParBSTLFLL/LFLL_8-core-IO.png){: width="480" height="320"}
 <br>
 
 * **Insert 10만 + Insert/Search**
 <br>
-![](/portfolio/public/images/4-ParBSTLFLL/LFLL-4-core-IS.png){: width="480" height="320"}
-![](/portfolio/public/images/4-ParBSTLFLL/LFLL-8-core-IS.png){: width="480" height="320"}
+![](/portfolio/public/images/4-ParBSTLFLL/LFLL_4-core-IS.png){: width="480" height="320"}
+![](/portfolio/public/images/4-ParBSTLFLL/LFLL_8-core-IS.png){: width="480" height="320"}
 <br>
 
 ## 사용 언어 / 도구
