@@ -1,6 +1,6 @@
 ---
 layout: project
-title: (Java) Parallel BST & Lockfree LinkedList
+title: (Java)                         Parallel BST  &  Lockfree LinkedList
 date: December 10, 2017
 image: /portfolio/public/images/4.lockfreeLL.png
 permalink: "project-4.html"
