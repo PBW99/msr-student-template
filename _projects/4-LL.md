@@ -42,14 +42,14 @@ permalink: "project-4.html"
 4-Core Sum : 14825(ms) 11.944 (GHz) 2830.646(M/sec) 23.44(% of cache hits)<br>
 8-Core Sum : 15317(ms) 14.953(GHz) 2181.157(M/sec) 22.93(% of cache hits)<br>
 
-	* Execution time<br>
+	* **Execution time**<br>
 스레드 2개일 경우의 성능이 가장 좋았습니다. 스레드가 3개 이상일 경우 root노드에 lock을 잡기 위해 기다리는 스레드가 많아, 느린 것으로 추정됩니다.
-	* Execution time의 Sum<br>
+	* **Execution time의 Sum**<br>
  보다시피 코어가 8개로 늘어났음에도 불구하고, 큰 성능 증가가 보이진 않았습니다. 이 Fine-Grained lock BST는 성능이 않음을 알 수 있습니다.
-	* Cache-miss와 cycles, execution time<br>
+	* **Cache-miss와 cycles, execution time**<br>
  BST의 Insert는 Leaf에만 Write를 하므로, 같은 노드를 바라보는 스레드가 있을 경우 한 스레드가 Write를 하여 다른 스레드에게 캐시invalidate영향이 미치는 경우는 별로 없다. 그렇다면 cache-miss가 증가하는 것은 다른 원인으로 볼 수 있습니다. 그 원인은 lock입니다. 한 스레드는 자신이 바라보는 node의 lock이 풀릴 때까지 기다려야 하는데, 한 락을 잡거나 풀기 위해서 모두 그 락에 write를 하기 때문에 invalidate가 생긴 것입니다.
 따라서 락에 대기하는 시간이 길어지므로, 스레드는 wait을 하게 되고 cycles수도 그만큼 줄어든 것입니다.
-	* 스레드가 3,4개 일 때,  8개 일 때<br>
+	* **스레드가 3,4개 일 때,  8개 일 때**<br>
  이것은 thread-switch타임과, CPU 휴식 비용을 생각해 볼 필요가 있습니다. lock의 구현마다 다르겠지만 스레드가 3,4개 일 경우 lock에서 기다리고 있는 스레드는 Sleep을 하게 됩니다. 이 때에는 실질적으로 하는 일이 없으므로 아무런 성능도 내지 못합니다.
 하지만 스레드가 8개 일 경우, CPU의 휴식 비율을 줄이고 더 많이 사용함으로써 성능이 좋아졌다고 볼 수 있습니다. 하지만 thread-switch에도 비용이 들기 마련인데, 그럼에도 불구하고 성능이 좋아졌다는 것은 thread-switch cost < CPU burning or Resting cost 이기 때문일 것입니다.
 
@@ -62,10 +62,9 @@ permalink: "project-4.html"
 4-Core IS_11 Sum : 25534(ms), 		8-Core IS_11 Sum : 13339(ms)<br>
 4-Core IS_14 Sum : 26864 (ms), 		8-Core IS_14 Sum : 12558(ms)<br>
 4-Core IS_19 Sum : 25774(ms)		8-Core IS_19 Sum : 12978(ms)<br>
-	* Search<br>
+	* **Search**<br>
  Search는 Insert와 lock을 잡는 과정이 동일합니다. 따라서 비슷한 그래프를 보입니다.  
-	* Sum이 보다 큰 것은 이미 100만개 insert된 BST에 새로운 값들을 insert하기 때문에 들어가야하는 depth가 길어졌기 때문일 것입니다.
-	* IS_14와 IS_19사이의 성능차이<br>
+	* **IS_14와 IS_19사이의 성능차이**<br>
  성능차이가 거의 없습니다. 이는 Search도 Insert와 동일한 Exclusive락을 잡기 때문에 이로 인해 성능증가의 한계치에 도달한 것입니다.
 
 
@@ -79,9 +78,9 @@ permalink: "project-4.html"
 4-Core IS_RW_14 Sum : 21643 (ms), 		8-Core IS_RW_14 Sum : 18079 (ms)<br>
 4-Core IS_RW_19 Sum : 17950 (ms), 		8-Core IS_RW_19 Sum : 8619 (ms)<br>
 	* Search를 Readlock으로 나머지는 Writelock으로 변경하습니다. <br>
-	* 8-Core IS_RW_11 Sum과 8-Core IS_11 Sum<br>
+	* **8-Core IS_RW_11 Sum과 8-Core IS_11 Sum**<br>
  오히려 RW락을 적용 했을 시 성능이 느려졌습니다. 이는 RW락으로 변경했을 시 그에 따른 스케줄링 정책이 다르기 때문에 그로인한 오차로 보여진다.
-	*  RW_IS_19와 IS_19사이의 성능차이<br>
+	*  **RW_IS_19와 IS_19사이의 성능차이**<br>
  성능차이가 큽니다(12978ms, 8619ms). 이는 RW락에선 Search를가Shared lock 잡기에,  Exclusive락의 한계치가 없어진 것입니다. 결국 8-Core IS_RW_19가 가장 좋은 성능을 보였습니다.
 
 
@@ -89,7 +88,7 @@ permalink: "project-4.html"
 > 하나의 Linked List에 다수에 스레드가 CRUD할 수 있도록 만들어서 Parallel Linked List입니다.
 > 하지만 Lock없이 구현하였기에 LockFree Linked List입니다. 방법은 다음과 같습니다.
 > > (Window라는 클래스 존재. Window는 parent Node와 current Node를 가진다. Search시에 이 Window객체를 반환하는데, 이는 parent Node와 current Node를 같이 반환하기 위해서이다.)
-* Search
+* **Search**
 	1.	먼저 parentN, currN, succN을 가진다. parentN은 root로 시작하고, currN은 parent.next.getReference()를 가진다.
 	2.	succN은 currN.next.get(marked)의 반환값을 가진다.
 	2-.1 만약 succN이 mark되있을 경우 currN이 논리적 딜리트 되었음을 의미한다(next에다가 mark함)
@@ -100,7 +99,7 @@ permalink: "project-4.html"
 	3.1 맞다면 new Window(parentN, currN)을 반환
 	4.	아니라면 parentN = currN, currN은 succN으로 지정하고 2로 돌아가 succN을 새로 찾는다.
 
-* Insert 
+* **Insert** 
 	1.	먼저 Search(root,data)를 통해 window를 얻고 그에 해당하는 parentN과 currN을 얻는다.
 	2.	currN.data == data라면 이미 존재하므로 return false;
 	3.	아니라면 새로운 newNode를 생성한다. Newnode.next = new AtomicMarkableRef(currN,false)로 지정한다. 즉 parentN과 currN사이에 newNode를 넣는것이다.
@@ -108,7 +107,7 @@ permalink: "project-4.html"
 	4.1 성공할 경우 return true;
 	5.	실패할 경우 주어진 data를 가지고 1로 돌아가 처음부터 다시 Insert시도한다.
 
-* Delete
+* **Delete**
 	1.	먼저 Search(root,data)를 통해 window를 얻고 그에 해당하는 parentN과 currN을 얻는다.
 	2.	currN.data != data라면 존재하지 않으므로 return false;
 	3.	아니라면 succN = curr.next.getReference()를 통해 succN을 얻도록 한다. 
@@ -120,7 +119,18 @@ permalink: "project-4.html"
 5-1 이 경우 실패를 하더라도 다른 스레드가 이미 바꾸었거나, 할 것을 의미한다. 따라서 true리턴.
 5-2. 여기서 없어진 currN은 가비지 콜렉터에 의해 제거될 것이다.
 
+### 결과
+<br>
 
+![](/portfolio/public/images/4-ParBSTLFLL/LFLL-4-core-IO.png){: width="480" height="320"}
+![](/portfolio/public/images/4-ParBSTLFLL/LFLL-8-core-IO.png){: width="480" height="320"}
+<br>
+
+<br>
+
+![](/portfolio/public/images/4-ParBSTLFLL/LFLL-4-core-IS.png){: width="480" height="320"}
+![](/portfolio/public/images/4-ParBSTLFLL/LFLL-8-core-IS.png){: width="480" height="320"}
+<br>
 
 ## 사용 언어 / 도구
 * Java
