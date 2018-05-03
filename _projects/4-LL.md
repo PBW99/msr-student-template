@@ -98,19 +98,19 @@ permalink: "project-4.html"
 <br><br>
 # LockFree Linked List
 > 하나의 Linked List에 다수에 스레드가 CRUD할 수 있도록 만들어서 Parallel Linked List입니다.
-> 하지만 Lock없이 구현하였기에 LockFree Linked List입니다. 방법은 다음과 같습니다.
-> > (Window라는 클래스 존재. Window는 parent Node와 current Node를 가진다. Search시에 이 Window객체를 반환하는데, 이는 parent Node와 current Node를 같이 반환하기 위해서이다.)
-<br>
+> 하지만 Lock없이 구현하였기에 LockFree Linked List입니다. 방법은 다음과 같습니다.(Nir Shavit - Art of Multiprocessor Programming 책 내용대로 구현했습니다.)
+> > (Window라는 클래스 존재. Window는 parent Node와 current Node를 가진다. Search시에 이 Window객체를 반환하는데, 이는 parent Node와 current Node를 같이 반환하기 위해서이다.)<br>
+(Java의 **AtomicMarkableReference**이용)<br>
 
 
 * **Search**
-	1.	먼저 parentN, currN, succN을 가진다. parentN은 root로 시작하고, currN은 parent.next.getReference()를 가진다.
-	2.	succN은 currN.next.get(marked)의 반환값을 가진다.
-	<br>2-.1 만약 succN이 mark되있을 경우 currN이 논리적 딜리트 되었음을 의미한다(next에다가 mark함)
-	<br>&nbsp;&nbsp;&nbsp;&nbsp;2-1.1 이 경우 parentN.next.compareAndSet(currN,succN,false,false)를 통해 currN을 피지컬 딜리트한다. 실패할경우 1로 돌아가서 다시 search한다.
-(이 과정이 생긴다는 의미는 mark까지 성공한 deletion이, parentN.next를 바꾸기 전에 search가 Interleave했음을 의미한다.)
-	<br>&nbsp;&nbsp;&nbsp;&nbsp;2-1.2 성공할 경우 currN을 surrN을 가리키도록 하고, succ은 다시 currN.next.get(marked)의 반환값을 가진다. 2-1테스트 과정을 반복한다.
-	3.	succN이 marked되지 않았을 경우, currN.data >=toSearch인지 확인한다.
+	1.	먼저 parentN, currN, succN을 가진다. parentN은 root로 시작하고, currN은 parent의 next reference이다.
+	2.	succN은 currN의 next reference이다.
+	<br>2-.1 만약 currN.get(marked)를 통해 얻은 marked가 true일경우, currN이 논리적 딜리트 되었음을 의미한다(next에다가 mark함)
+	<br>&nbsp;&nbsp;&nbsp;&nbsp;2-1.1 이 경우 parentN.next.compareAndSet(currN,succN,false,false)를 통해 currN을 피지컬 딜리트한다. 실패할경우 1로 돌아가서 다시 search한다.<br>
+(이 과정이 생긴다는 의미는 mark까지 성공한 deletion이, parentN.next를 바꾸기 전에 search가 Interleave되어 다른 스레드가 피지컬 딜리트 했음을 의미한다.)
+	<br>&nbsp;&nbsp;&nbsp;&nbsp;2-1.2 성공할 경우 currN에 succN을 대입하고, succN은 다시 currN의 next Reference를 넣는다. 2-1테스트 과정을 반복한다.
+	3.	marked가 false일 경우, currN.data >=toSearch인지 확인한다.
 	<br>3.1 맞다면 new Window(parentN, currN)을 반환
 	4.	아니라면 parentN = currN, currN은 succN으로 지정하고 2로 돌아가 succN을 새로 찾는다.
 	<br>
@@ -143,6 +143,11 @@ permalink: "project-4.html"
 ![](/portfolio/public/images/4-ParBSTLFLL/LFLL_4-core-IO.png){: width="480" height="320"}
 ![](/portfolio/public/images/4-ParBSTLFLL/LFLL_8-core-IO.png){: width="480" height="320"}
 <br>
+4-Core Sum : 380056(ms) 12.837 (GHz) 609.969 (M/sec) 132.33 (% of cache hits)<br>
+8-Core Sum : 235410(ms) 16.414(GHz) 1264.264(M/sec) 106.26(% of cache hits)<br>
+<br>
+	* 스레드 수 증가에 따른 성능 향상이 보이는 그래프가 나왔습니다. 주목할 부분은 8-Core 스레드 8에서 L1-cache로드가 증가하고, 캐시미스가 줄어들었는데, 스레드 수 증가에 따라 겹치는 부분(리스트에 앞쪽부분)이 많아진 것으로 보인다.
+
 <br><br>
 * **Insert 10만 + Insert/Search**
 <br>
