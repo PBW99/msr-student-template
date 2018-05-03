@@ -12,8 +12,8 @@ permalink: "project-4.html"
 > 하나의 Binary Search Tree에 다수에 스레드가 동시다발적으로 CRUD(Create/Read/Update/Delete)할 수 있도록 만들어서 Parallel Binary Search Tree입니다.
 > 다수의 스레드가 접근할 수 있도록 Fine-grained lock으로 구현했습니다. 그 중에 Hand-over-Hand lock을 이용하였습니다.
 방법은 다음과 같습니다.
-> > (C(Cursor) : Target을 찾기 위해 BST내부를 순회하는 포인터, 
-P_C : Cursor의 부모,)
+> > (C(Cursor) : Target을 찾기 위해 BST내부를 순회하는 포인터) <br>
+(P_C : Cursor의 부모,)
 
 1.	제일 먼저 C를 root로 잡고 lock을 잡는다. 
 2.	찾아야하는 데이터의 값에 맞는 방향으로 C를 이동하고 lock을 잡는다. 이에 맞추어 P_C도 세팅한다. 
@@ -86,7 +86,39 @@ P_C : Cursor의 부모,)
 
 ### LockFree Linked List
 > 하나의 Linked List에 다수에 스레드가 CRUD할 수 있도록 만들어서 Parallel Linked List입니다.
-> 하지만 Lock없이 구현하였기에 LockFree Linked List입니다.
+> 하지만 Lock없이 구현하였기에 LockFree Linked List입니다. 방법은 다음과 같습니다.
+> > (Window라는 클래스 존재. Window는 parent Node와 current Node를 가진다. Search시에 이 Window객체를 반환하는데, 이는 parent Node와 current Node를 같이 반환하기 위해서이다.)
+* Search
+	1.	먼저 parentN, currN, succN을 가진다. parentN은 root로 시작하고, currN은 parent.next.getReference()를 가진다.
+	2.	succN은 currN.next.get(marked)의 반환값을 가진다.
+	2-.1 만약 succN이 mark되있을 경우 currN이 논리적 딜리트 되었음을 의미한다(next에다가 mark함)
+	2-1.1 이 경우 parentN.next.compareAndSet(currN,succN,false,false)를 통해 currN을 피지컬 딜리트한다. 실패할경우 1로 돌아가서 다시 search한다.
+(이 과정이 생긴다는 의미는 mark까지 성공한 deletion이, parentN.next를 바꾸기 전에 search가 Interleave했음을 의미한다.)
+	2-1.2 성공할 경우 currN을 surrN을 가리키도록 하고, succ은 다시 currN.next.get(marked)의 반환값을 가진다. 2-1테스트 과정을 반복한다.
+	3.	succN이 marked되지 않았을 경우, currN.data >=toSearch인지 확인한다.
+	3.1 맞다면 new Window(parentN, currN)을 반환
+	4.	아니라면 parentN = currN, currN은 succN으로 지정하고 2로 돌아가 succN을 새로 찾는다.
+
+* Insert 
+	1.	먼저 Search(root,data)를 통해 window를 얻고 그에 해당하는 parentN과 currN을 얻는다.
+	2.	currN.data == data라면 이미 존재하므로 return false;
+	3.	아니라면 새로운 newNode를 생성한다. Newnode.next = new AtomicMarkableRef(currN,false)로 지정한다. 즉 parentN과 currN사이에 newNode를 넣는것이다.
+	4.	parentN.next.compareAndSet(currN,newNode,false,false)를 통해 parent.next가 newNode를 가리키도록한다.
+	4.1 성공할 경우 return true;
+	5.	실패할 경우 주어진 data를 가지고 1로 돌아가 처음부터 다시 Insert시도한다.
+
+* Delete
+	1.	먼저 Search(root,data)를 통해 window를 얻고 그에 해당하는 parentN과 currN을 얻는다.
+	2.	currN.data != data라면 존재하지 않으므로 return false;
+	3.	아니라면 succN = curr.next.getReference()를 통해 succN을 얻도록 한다. 
+	*currN.next를 mark하여 currN을 논리적 딜리트하기 위함이다.
+	*parentN.next가 succN을 가리키도록하기 위함이다.
+	4.	currN.next.compareAndSet(succN,succN,false,true)를 currN을 논리적 딜리트한다.
+	4.1 실패할 경우 currN과 succN사이의 새 노드가 삽입되었거나,  다른 스레드가 이미 mark했음을 의미한다. 혹은 succN이 이미 논리적 딜리트 되어있었고 이것이 Search도중 피지컬 딜리트가 되었을 수도 있다. 어쨌든, 1로 돌아가 처음부터 다시 찾고 marking을 시도한다.
+	5.	성공할 경우 parentN.next.compareAndSet(currN,succN,false,false)를 통해 parentN이 succN을 가리키도록한다.
+5-1 이 경우 실패를 하더라도 다른 스레드가 이미 바꾸었거나, 할 것을 의미한다. 따라서 true리턴.
+5-2. 여기서 없어진 currN은 가비지 콜렉터에 의해 제거될 것이다.
+
 
 
 ## 사용 언어 / 도구
